@@ -1,0 +1,82 @@
+# LMM Project — File Map
+
+> Read this to find the right file. Each section file is < 150 lines for token efficiency.
+
+```
+LMM/
+├── DASHBOARD.md                     # 🔴 Read first — all actions sorted by deadline
+├── idea.md                          # Core project idea (39 lines)
+├── .agent/
+│   ├── SKILL.md                     # Project context (compact)
+│   └── FILE_MAP.md                  # This file
+├── grants/
+│   ├── index.md                     # Master index — links to all grants
+│   ├── template/                    # 8-section template + checklist for new grants
+│   │   ├── index.md                 # Structure + token-saving rules
+│   │   ├── 01-problem.md           # Problem statement template
+│   │   ├── 02-solution.md          # Solution & hypothesis template
+│   │   ├── 03-innovation.md        # Innovation argument template
+│   │   ├── 04-team.md             # Team & HR template
+│   │   ├── 05-budget.md           # Budget template
+│   │   ├── 06-timeline.md         # Milestone template
+│   │   ├── 07-sustainability.md   # Sustainability template
+│   │   ├── 08-appendix.md         # Data & sources template
+│   │   └── checklist.md           # Pre-submission checklist
+│   ├── epic-megagrants/             # ✅ Complete — ready to submit
+│   │   ├── index.md                 # Landing page (~60 lines)
+│   │   ├── 01-problem-narrative.md  # Problem narrative (~40 lines)
+│   │   ├── 02-why-unreal.md         # Why UE + Epic (~30 lines)
+│   │   ├── 03-technical-architecture.md  # Architecture (~180 lines — largest)
+│   │   ├── 04-team.md              # ADMAIS US + Laos (~55 lines)
+│   │   ├── 05-competitive-landscape.md   # Competitive analysis (~45 lines)
+│   │   ├── 06-budget.md            # Budget + cost-reduction options (~45 lines)
+│   │   ├── 07-milestones.md        # Timeline (~50 lines)
+│   │   ├── 08-sustainability.md    # Post-grant plan (~85 lines)
+│   │   └── 09-appendix.md          # Statistics (~50 lines)
+│   ├── isif-asia/                   # 🟡 Preparing for 2027
+│   │   ├── index.md                 # Landing page + section links
+│   │   ├── 01-alignment.md         # ISIF alignment
+│   │   ├── 02-problem.md           # Problem statement
+│   │   ├── 03-solution.md          # Solution & hypothesis
+│   │   ├── 04-innovation.md        # Innovation argument
+│   │   ├── 05-team.md             # Team
+│   │   ├── 06-budget.md           # 3-tier budget ($20K/$50K/$75K)
+│   │   ├── 07-gender-inclusion.md  # ⬜ Needs writing
+│   │   ├── 08-monitoring.md        # ⬜ M&E framework
+│   │   ├── 09-appendix.md          # 🟡 Needs data
+│   │   └── actions.md             # TODO list
+│   ├── pcf/                         # 🟡 Inquiring about next cycle
+│   │   ├── index.md                 # Landing page + contact info
+│   │   ├── 01-requirements.md      # Raw PCF template questions
+│   │   ├── 02-problem.md           # Problem statement
+│   │   ├── 03-solution.md          # Solution & design thinking
+│   │   ├── 04-innovation.md        # Innovation argument
+│   │   ├── 05-team.md             # Team
+│   │   ├── 06-budget.md           # 🟡 Needs figures
+│   │   └── actions.md             # TODO list
+│   ├── usaid-div/                    # 🟢 Active pursuit — Stage 1 concept note (was USAID DIV, now independent at div.fund)
+│   │   ├── index.md                 # Landing page + DIV model + fit analysis
+│   │   └── actions.md               # Stage 1 concept note TODO
+│   ├── unesco-pp/                    # 🔵 Tracking — 2028–2029 cycle
+│   │   └── index.md                 # Research + alignment + Lao NatCom path
+│   └── future/                       # Research archive
+│       ├── research-plan.md         # 8-grant batch research methodology (complete ✅)
+│       └── pursuit-plan.md          # Compiled pursuit plan — 3 viable targets
+├── plans/
+│   ├── sequential-plan.md           # Grant execution plan with @flash/@pro routing
+│   ├── build-plan.md                # 16-step build plan: Library first, then Creator Studio
+│   ├── cloud-architecture.md        # Paperspace GPU + Cloudflare infrastructure
+│   └── ai-architecture.md           # Self-hosted Llama 3 + SDXL on GPU
+```
+
+## Quick Find
+
+| What you need | Start with |
+|---------------|-----------|
+| What to do right now | `DASHBOARD.md` |
+| Find a grant section | `grants/<grant>/index.md` |
+| Start a new grant | `grants/template/index.md` |
+| Build plan | `plans/build-plan.md` |
+| Infrastructure | `plans/cloud-architecture.md` |
+| AI architecture | `plans/ai-architecture.md` |
+| Core idea | `idea.md` |
