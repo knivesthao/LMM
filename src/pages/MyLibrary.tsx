@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { getDownloadedScenes, removeContent } from '@/lib/idb';
 
 interface Content {
   id: string;
@@ -16,8 +17,28 @@ interface Content {
 export function MyLibrary() {
   const [books, setBooks] = useState<Content[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloadedIds, setDownloadedIds] = useState<Set<string>>(new Set());
+  const [offline, setOffline] = useState(!navigator.onLine);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
+  // Track online/offline
+  useEffect(() => {
+    function goOffline() {
+      setOffline(true);
+    }
+    function goOnline() {
+      setOffline(false);
+    }
+    window.addEventListener('offline', goOffline);
+    window.addEventListener('online', goOnline);
+    return () => {
+      window.removeEventListener('offline', goOffline);
+      window.removeEventListener('online', goOnline);
+    };
+  }, []);
+
+  // Fetch purchases
   useEffect(() => {
     async function fetchPurchases() {
       if (!user) {
@@ -45,11 +66,30 @@ export function MyLibrary() {
       if (!contentError) {
         setBooks(content || []);
       }
+
+      // Check which content is downloaded
+      const downloaded = new Set<string>();
+      for (const id of contentIds) {
+        const scenes = await getDownloadedScenes(id);
+        if (scenes.length > 0) downloaded.add(id);
+      }
+      setDownloadedIds(downloaded);
+
       setLoading(false);
     }
 
     fetchPurchases();
   }, [user]);
+
+  async function handleRemove(id: string, title: string) {
+    if (!confirm(`Remove downloaded content for "${title}"?`)) return;
+    await removeContent(id);
+    setDownloadedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }
 
   if (loading) {
     return (
@@ -61,9 +101,15 @@ export function MyLibrary() {
 
   return (
     <div className="my-library">
+      {offline && (
+        <div className="offline-banner" role="alert">
+          You are offline. Downloaded books are still available.
+        </div>
+      )}
+
       <header className="library-header">
         <h1>My Library</h1>
-        <Link to="/">← Back to Library</Link>
+        <Link to="/">← Browse Library</Link>
       </header>
 
       {!user ? (
@@ -79,25 +125,51 @@ export function MyLibrary() {
         </div>
       ) : (
         <div className="content-grid" role="list">
-          {books.map((book) => (
-            <Link
-              to={`/book/${book.id}`}
-              key={book.id}
-              className="content-card"
-              role="listitem"
-            >
-              <img
-                src={book.cover_image_url || '/mock/cover-placeholder.png'}
-                alt={book.title}
-                loading="lazy"
-              />
-              <div className="card-body">
-                <h2>{book.title}</h2>
-                <span className="badge">{book.language}</span>
-                <span className="badge">{book.reading_level}</span>
+          {books.map((book) => {
+            const isDownloaded = downloadedIds.has(book.id);
+
+            return (
+              <div key={book.id} className="content-card my-book" role="listitem">
+                <div
+                  className="card-tap-area"
+                  onClick={() => navigate(`/read/${book.id}`)}
+                >
+                  <div className="card-img-wrapper">
+                    <img
+                      src={book.cover_image_url || '/mock/cover-placeholder.png'}
+                      alt={book.title}
+                      loading="lazy"
+                    />
+                    <span
+                      className={`download-badge ${
+                        isDownloaded ? 'downloaded' : ''
+                      }`}
+                      title={isDownloaded ? 'Downloaded' : 'Not downloaded'}
+                    >
+                      {isDownloaded ? '✓' : '☁'}
+                    </span>
+                  </div>
+                  <div className="card-body">
+                    <h2>{book.title}</h2>
+                    <span className="badge">{book.language}</span>
+                    <span className="badge">{book.reading_level}</span>
+                  </div>
+                </div>
+                {isDownloaded && (
+                  <button
+                    className="remove-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemove(book.id, book.title);
+                    }}
+                    aria-label={`Remove ${book.title} from device`}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
