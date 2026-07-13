@@ -266,3 +266,145 @@ body {
   padding: 3rem;
   color: var(--text-muted);
 }
+
+/* === Purchase Page === */
+
+.purchase {
+  padding-top: 1rem;
+}
+
+.purchase-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.purchase-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.purchase-header img {
+  width: 80px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--border);
+}
+
+.purchase-header h1 {
+  font-size: 1.1rem;
+}
+
+.price-display {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.price-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.price-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.qr-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.qr-code {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  background: white;
+  padding: 0.5rem;
+}
+
+.qr-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.instructions {
+  margin-bottom: 1rem;
+}
+
+.instructions h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.instructions ol {
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.instructions-lao {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.payment-actions {
+  text-align: center;
+}
+
+.payment-actions .buy-btn {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.05rem;
+}
+
+.hint {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.error-message {
+  color: var(--accent);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.success {
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 2.5rem;
+  color: #4ecdc4;
+  margin-bottom: 0.5rem;
+}
+
+.success h1 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.success p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
