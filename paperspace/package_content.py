@@ -27,10 +27,14 @@ MAX_WIDTH = 800
 WEBP_QUALITY = 75
 TARGET_TOTAL_MB = 5
 
+# Cloudflare R2 configuration
 R2_ACCESS_KEY = os.environ.get("R2_ACCESS_KEY", "")
 R2_SECRET_KEY = os.environ.get("R2_SECRET_KEY", "")
-R2_ENDPOINT = os.environ.get("R2_ENDPOINT", "")
+R2_ENDPOINT = os.environ.get("R2_ENDPOINT", "")  # S3-compatible API endpoint
 R2_BUCKET = os.environ.get("R2_BUCKET", "lmm-content")
+R2_PUBLIC_URL = os.environ.get("R2_PUBLIC_URL", "")  # e.g. https://cdn.admais.xyz
+
+# Supabase configuration
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 
@@ -49,11 +53,16 @@ def compress(input_path: str, output_path: str) -> int:
 
 def upload(key: str, path: str) -> str:
     import boto3
+    if not R2_ENDPOINT or not R2_ACCESS_KEY:
+        print(f"Warning: R2 not configured, skipping upload of {key}", file=sys.stderr)
+        return R2_PUBLIC_URL + "/" + key if R2_PUBLIC_URL else ""
     s3 = boto3.client("s3", endpoint_url=R2_ENDPOINT,
                        aws_access_key_id=R2_ACCESS_KEY,
                        aws_secret_access_key=R2_SECRET_KEY,
                        region_name="auto")
     s3.upload_file(path, R2_BUCKET, key)
+    if R2_PUBLIC_URL:
+        return f"{R2_PUBLIC_URL}/{key}"
     return f"{R2_ENDPOINT}/{R2_BUCKET}/{key}"
 
 
@@ -112,17 +121,24 @@ def main():
 
     # Upload to Supabase if configured
     content_id = None
-    if SUPABASE_URL:
-        content_id = insert_metadata({
-            "title": args.title, "language": args.language,
-            "reading_level": args.reading_level, "price_kip": args.price,
-            "creator_name": args.creator, "description": args.description,
-            "cover_image_url": scenes[0]["url"] if scenes else "",
-        })
-        print(f"Content ID: {content_id}")
+    if not SUPABASE_URL:
+        print("Warning: SUPABASE_URL not set — metadata will not be recorded")
+    else:
+        try:
+            content_id = insert_metadata({
+                "title": args.title, "language": args.language,
+                "reading_level": args.reading_level, "price_kip": args.price,
+                "creator_name": args.creator, "description": args.description,
+                "cover_image_url": scenes[0]["url"] if scenes else "",
+            })
+            print(f"Content ID: {content_id}")
+        except Exception as e:
+            print(f"Warning: Failed to insert metadata: {e}", file=sys.stderr)
 
     # Upload to R2 if configured
-    if R2_ACCESS_KEY and content_id:
+    if not R2_ACCESS_KEY:
+        print("Warning: R2 not configured — files saved to " + str(out_dir))
+    elif content_id:
         for i, img in enumerate(images):
             n = i + 1
             out = out_dir / f"scene_{n:02d}.webp"

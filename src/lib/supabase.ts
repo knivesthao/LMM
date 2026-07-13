@@ -66,7 +66,7 @@ function createStubClient() {
       signOut: () => Promise.resolve({ error: null }),
       admin: { getUserById: () => Promise.resolve({ data: null }) },
     },
-  } as ReturnType<typeof createClient>;
+  } as unknown as ReturnType<typeof createClient>;
 }
 
 export const supabase = isConfigured()
