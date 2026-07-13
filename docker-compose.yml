@@ -23,7 +23,7 @@ services:
       - /app/node_modules
     environment:
       - CI=true
-    command: npx vitest run
+    command: npx vitest run --exclude src/e2e
 
   test-e2e:
     build:
@@ -33,6 +33,4 @@ services:
       - dev
     environment:
       - CI=true
-    command: >
-      sh -c "npx playwright install chromium-headless-shell &&
-             npx playwright test --reporter=list"
+    command: npx playwright test

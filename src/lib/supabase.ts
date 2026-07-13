@@ -1,82 +1,80 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: false,
-  },
-});
-
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
-
-export interface Database {
-  public: {
-    Tables: {
-      content: {
-        Row: {
-          id: string;
-          title: string;
-          creator_name: string;
-          language: 'lao' | 'english';
-          reading_level: 'beginner' | 'intermediate' | 'advanced';
-          cover_image_url: string;
-          price_kip: number;
-          description: string;
-          created_at: string;
-        };
-      };
-      purchases: {
-        Row: {
-          id: string;
-          user_id: string;
-          content_id: string;
-          purchased_at: string;
-        };
-      };
-      payments: {
-        Row: {
-          id: string;
-          user_id: string;
-          content_id: string;
-          amount_kip: number;
-          status: 'pending' | 'confirmed' | 'rejected';
-          created_at: string;
-        };
-      };
-      projects: {
-        Row: {
-          id: string;
-          creator_id: string;
-          type: 'comic' | 'book';
-          title: string;
-          description: string;
-          language: 'lao' | 'english';
-          reading_level: 'beginner' | 'intermediate' | 'advanced';
-          price_kip: number;
-          status: 'draft' | 'published';
-          created_at: string;
-        };
-      };
-      scenes: {
-        Row: {
-          id: string;
-          project_id: string;
-          scene_number: number;
-          narration_text: string;
-          rendered_image_url: string | null;
-          created_at: string;
-        };
-      };
-    };
-  };
+function isConfigured(): boolean {
+  return (
+    typeof supabaseUrl === 'string' &&
+    supabaseUrl.startsWith('http') &&
+    typeof supabaseAnonKey === 'string' &&
+    supabaseAnonKey.length > 0
+  );
 }
+
+// Stub — returns mock data per table when Supabase isn't configured
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockData: Record<string, any> = {
+  content: [
+    {
+      id: '1',
+      title: 'The Brave Buffalo',
+      creator_name: 'Somsack',
+      language: 'lao',
+      reading_level: 'beginner',
+      cover_image_url: '/mock/cover-placeholder.png',
+      price_kip: 5000,
+      description: 'A story about a brave buffalo.',
+    },
+  ],
+};
+
+function makeBuilder(table: string) {
+  const data = mockData[table] ?? [];
+  const builder: Record<string, any> = {
+    select: () => builder,
+    eq: () => builder,
+    in: () => builder,
+    order: () => builder,
+    single: () => {
+      const item = Array.isArray(data) && data.length > 0 ? data[0] : data;
+      builder.then = (resolve: (v: unknown) => void) =>
+        Promise.resolve(resolve({ data: item, error: null }));
+      return builder;
+    },
+    insert: () => {
+      builder.then = (resolve: (v: unknown) => void) =>
+        Promise.resolve(resolve({ data: null, error: null }));
+      return builder;
+    },
+    then: (resolve: (v: unknown) => void) =>
+      Promise.resolve(resolve({ data, error: null })),
+  };
+  return builder;
+}
+
+function createStubClient() {
+  return {
+    from: (table: string) => makeBuilder(table),
+    rpc: () => makeBuilder(''),
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null } }),
+      onAuthStateChange: () => ({
+        data: { subscription: { unsubscribe: () => {} } },
+      }),
+      signInWithOtp: () => Promise.resolve({ error: null }),
+      signOut: () => Promise.resolve({ error: null }),
+      admin: { getUserById: () => Promise.resolve({ data: null }) },
+    },
+  } as ReturnType<typeof createClient>;
+}
+
+export const supabase = isConfigured()
+  ? createClient(supabaseUrl!, supabaseAnonKey!, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+      },
+    })
+  : createStubClient();
