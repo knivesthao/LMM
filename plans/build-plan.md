@@ -1,7 +1,7 @@
 # LMM — Build Plan (Prompt-by-Prompt)
 
 > **Build order:** Digital Library first → Creator Studio second.
-> **Architecture:** Cloudflare (hosting) + Paperspace GPU (UE5) + OpenAI (LLM) + Replicate (image gen).
+> **Architecture:** Cloudflare Pages (SPA) + Cloudflare Workers (API gateway) + Supabase (database + auth) + Paperspace GPU (UE5 + AI inference) + R2 (content storage).
 > See `cloud-architecture.md` for infrastructure details.
 > Each prompt is self-contained — copy one at a time into a chat.
 > **Status:** `⬜` not started, `🟡` in progress, `✅` done.
@@ -10,53 +10,34 @@
 
 ## PART A: Digital Library
 
-### A1 — Scaffold the project
+### A1 — Scaffold the project (Cloudflare + Supabase)
 ⬜
 
 ```
-We're building LMM — a digital media library for comics and interactive children's books, primarily for Laos. Hosted on Cloudflare.
+We're building LMM — a digital media library for comics and interactive children's books, primarily for Laos.
 
-Start by scaffolding the entire project:
+Scaffold the entire project:
 
 Tech stack:
-- Cloudflare Pages for the web app (React SPA)
-- Cloudflare Workers for the backend API
-- Cloudflare R2 for content storage (images, comic scenes, books)
-- Cloudflare D1 for the database (SQLite at the edge)
+- Cloudflare Pages for the SPA (React)
+- Cloudflare Workers for the API gateway (thin routing layer)
+- Supabase for database (Postgres) + auth (phone number, built-in) + storage
+- Cloudflare R2 for content storage (rendered comics, books)
 
-Deliverables:
-- A "Hello World" React app deployed to Cloudflare Pages
-- A Workers API that returns a JSON health check at GET /api/health
-- A D1 database with a placeholder users table (id, phone_number, balance_credits, created_at)
-- An R2 bucket named "lmm-content" created and accessible
+Setup:
+1. Cloudflare Pages — deploy a "Hello World" React app
+2. Supabase — create project, set up phone auth (built-in), create schema:
+   - users (managed by Supabase Auth)
+   - content (id, title, creator_name, language, reading_level, cover_image_url, price_kip, description)
+   - purchases (user_id, content_id, purchased_at)
+   - payments (user_id, content_id, amount_kip, status, created_at)
+3. Cloudflare Workers — deploy a health check: GET /api/health
+4. R2 — create bucket "lmm-content"
 
-Goal: all four Cloudflare services talking to each other. No UI yet — just infrastructure.
+Goal: all services talking to each other. Supabase handles auth — no hand-rolled login code.
 ```
 
-### A2 — User auth by phone number
-⬜
-
-```
-Build phone number authentication for the LMM library.
-
-Users in Laos register and log in with their phone number — no email, no password. Flow:
-1. User enters phone number on login page
-2. System generates a 6-digit code and logs it (SMS integration via Twilio can come later)
-3. User enters code → authenticated
-4. JWT stored in localStorage, sent with every API call
-
-Build:
-- /login — phone number input form
-- /verify — code input form  
-- GET /api/auth/request-code — generates + stores code in D1
-- POST /api/auth/verify-code — checks code, returns JWT
-- /library — redirect after login (placeholder for now)
-
-D1: auth_codes table (phone_number, code, expires_at, attempts)
-Edge cases: new vs returning user, code expiration (5 min), max 3 attempts.
-```
-
-### A3 — Content catalog (browse + search)
+### A2 — Content catalog (browse + search)
 ⬜
 
 ```
@@ -64,20 +45,20 @@ Build the content catalog for the digital library.
 
 Users browse available comics and books, search, and filter by language (Lao, English) and reading level.
 
-D1: content table (id, title, creator_name, language, reading_level, cover_image_url, price_kip, description, created_at)
-Seed with 5 placeholder entries (hardcoded in a migration script).
+Supabase: content table already exists from A1. Seed with 5 placeholder entries.
 
 Build:
 - /library — grid of cover images with title, price, language badge
 - /search — search bar with live filter results  
 - /book/:id — detail page: cover, description, creator, price, "Buy" button
 
-All content metadata via Workers API. Cover images are placeholder PNGs in R2 — we'll replace later.
+Content metadata comes from Supabase REST API (auto-generated endpoints from schema). Workers routes requests.
+Cover images are placeholder PNGs in R2 — we'll replace later.
 
 Mobile-first — our users are on $50 Android phones.
 ```
 
-### A4 — QR payment + WhatsApp confirmation flow
+### A3 — QR payment + WhatsApp confirmation flow
 ⬜
 
 ```
@@ -91,16 +72,16 @@ Flow:
 
 Build:
 - /purchase/:id — shows QR + instructions + "I've paid" button (registers attempt)
-- GET /api/admin/pending-payments — list pending
-- POST /api/admin/confirm-payment/:id — confirms + credits user
 
-D1: payments table (id, user_id, content_id, amount_kips, status, created_at)
-     purchases table (user_id, content_id, purchased_at)
+Supabase tables (from A1):
+- payments: id, user_id, content_id, amount_kips, status, created_at
+- purchases: user_id, content_id, purchased_at
 
+Workers routes admin confirm/deny requests to Supabase.
 QR image is a static file in R2. WhatsApp number and instructions are configurable.
 ```
 
-### A5 — Download system (chunked, offline-capable)
+### A4 — Download system (chunked, offline-capable)
 ⬜
 
 ```
@@ -114,7 +95,7 @@ Requirements:
 - Downloaded content stored in IndexedDB, available offline
 
 Build:
-- GET /api/content/:id/manifest — returns list of scene chunks with URLs and sizes
+- GET /api/content/:id/manifest — returns list of scene chunks with URLs and sizes (Workers → Supabase → R2)
 - R2 folder per title: /content/{id}/scene_01.webp, scene_02.webp, ..., manifest.json
 - /read/:id — reader page:
   - Fetches manifest, downloads scenes one at a time with progress bar
@@ -125,7 +106,7 @@ Build:
 Test with 3-5 placeholder scenes in R2.
 ```
 
-### A6 — User library (purchased content)
+### A5 — User library (purchased content)
 ⬜
 
 ```
@@ -135,7 +116,7 @@ Build:
 - /my-library — grid of purchased titles
   - Each card: cover, title, download status (cloud = not downloaded, checkmark = downloaded)
   - Tap opens reader, long-press offers "Remove download"
-- GET /api/my-library — returns user's purchases (joined with content table)
+- Workers → Supabase: GET purchases JOIN content for user's purchased items
 - Download status from IndexedDB (checked on page load)
 
 Library works offline — shows cached data from last online session.
@@ -282,7 +263,7 @@ Build on Cloudflare Pages:
   - Left: text input per panel — creator writes narration in Lao or English
   - Right: preview — rendered panel output
 - "Add Panel" button
-- "Generate" per panel → sends narration, triggers full pipeline (OpenAI → Replicate → Paperspace GPU), returns preview
+- "Generate" per panel → sends narration, triggers full pipeline on Paperspace, returns preview
 - Drag/drop to reorder panels
 - Metadata: title, description, language, reading level, price in kip
 
@@ -293,8 +274,8 @@ Build on Cloudflare Pages:
 **4. Project Settings (/studio/settings/:id)**
 - Edit metadata, preview full comic/book, "Publish" button
 
-D1: projects + scenes tables
-API: CRUD endpoints for projects/scenes. POST /api/studio/generate → triggers full pipeline.
+Supabase: projects + scenes tables. Workers routes CRUD to Supabase.
+POST /api/studio/generate → triggers the Paperspace render pipeline (B7).
 ```
 
 ### B7 — Connect Creator Studio to the rendering pipeline
@@ -340,16 +321,17 @@ Expect 2-5 min per scene. GPU queues AI inference between render jobs.
 ```
 Simple admin panel for the platform.
 
-Build on Cloudflare Pages: /admin
+Supabase's built-in dashboard handles most admin needs:
+- Table editor for browsing/editing payments, users, content directly
+- SQL editor for queries
+- Auth dashboard for user management
 
-Pages:
-1. **Payment confirmations** — table of pending QR/WhatsApp payments (A4). Confirm/Reject buttons.
-2. **Generation queue** — monitor rendering pipeline (B7). Filter by status.
-3. **Content management** — list all published content, edit metadata, unpublish.
-4. **User management** — list users, view purchase history.
+Build the one piece Supabase doesn't cover:
+- /admin/payments — table of pending QR/WhatsApp payments with Confirm/Reject buttons
+  - Supabase: payments table already has status column. Admin actions update it.
+- /admin/generation-queue — monitor Paperspace render pipeline (B7). Filter by status.
 
-Protect admin routes: check a hardcoded admin password in the JWT.
-Functional, not pretty — internal tool.
+Protect admin routes: check user role in Supabase JWT (set admin users via Supabase dashboard).
 ```
 
 ### C2 — PWA + Mobile optimizations
@@ -398,18 +380,17 @@ Runs as manual step during prototype — creator publishes → dev runs script �
 
 ```
 PART A: Digital Library
-⬜ A1 — Scaffold the project (Cloudflare Pages + Workers + R2 + D1)
-⬜ A2 — User auth by phone number
-⬜ A3 — Content catalog (browse + search)
-⬜ A4 — QR payment + WhatsApp confirmation flow
-⬜ A5 — Download system (chunked, offline-capable)
-⬜ A6 — User library (purchased content)
+⬜ A1 — Scaffold the project (Cloudflare Pages + Workers + Supabase + R2)
+⬜ A2 — Content catalog (browse + search)
+⬜ A3 — QR payment + WhatsApp confirmation flow
+⬜ A4 — Download system (chunked, offline-capable)
+⬜ A5 — User library (purchased content)
 
 PART B: Creator Studio
 ⬜ B1 — Set up Paperspace GPU + UE5
 ⬜ B2 — UE5 Blueprint orchestrator (first render test)
-⬜ B3 — LLM integration (narration → scene JSON)
-⬜ B4 — AI image generation (Replicate API)
+⬜ B3 — Self-host Llama 3 on Paperspace (narration → scene JSON)
+⬜ B4 — Self-host Stable Diffusion on Paperspace (image generation)
 ⬜ B5 — Comic post-process shader
 ⬜ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline

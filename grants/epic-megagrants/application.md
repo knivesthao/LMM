@@ -123,7 +123,7 @@ We are requesting approximately $62,000 for a 12-month build. All development ru
 | Equipment | $3,000 | Development and testing devices, content creation tools |
 | Paperspace GPU — UE5 development (months 1–5) | $390 | Cloud GPU for UE5 development. P5000 (16GB VRAM) at $0.78/hr on-demand. Estimated 100 hours/month × 5 months. Also runs self-hosted Llama 3 (scene parsing) + Stable Diffusion (image gen) during idle time between renders — no external AI API costs. |
 | Paperspace GPU — UE5 + AI inference (months 6–12) | $3,227 | Monthly plan ($461/mo × 7 mo) once creators are actively generating content. Always-on GPU handles UE5 rendering, Llama 3 LLM calls, and Stable Diffusion image generation on the same machine. |
-| Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), domain (~$10) |
+| Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), Supabase (free tier for prototype), domain (~$10) |
 | Content Commissioning | $3,000 | Flat fees to Lao creators for initial library titles beyond what in-house QA/writers produce |
 | Estimated Taxes (reserve) | $2,700 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses deductible — conservative reserve on projected net profit. |
 | **Total** | **~$62,117** | |
