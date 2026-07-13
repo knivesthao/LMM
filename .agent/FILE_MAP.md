@@ -63,10 +63,13 @@ LMM/
 │       ├── research-plan.md         # 8-grant batch research methodology (complete ✅)
 │       └── pursuit-plan.md          # Compiled pursuit plan — 3 viable targets
 ├── plans/
+│   ├── ARCHITECTURE.md               # 🔴 Master architecture: providers, costs, integration points
 │   ├── sequential-plan.md           # Grant execution plan with @flash/@pro routing
-│   ├── build-plan.md                # 16-step build plan: Library first, then Creator Studio
-│   ├── cloud-architecture.md        # Paperspace GPU + Cloudflare infrastructure
-│   └── ai-architecture.md           # Self-hosted Llama 3 + SDXL on GPU
+│   ├── build-plan.md                # 15-step build plan with status tracking
+│   ├── backend-architecture.md      # Workers gateway + DB functions + RunPod backend
+│   ├── ai-architecture.md           # Self-hosted Llama 3 + SDXL on GPU
+│   ├── gpu-costs.md                 # GPU price comparison (RunPod vs Paperspace vs GCP)
+│   └── dev-workflow.md              # Local development + Docker commands
 ```
 
 ## Quick Find
@@ -76,7 +79,6 @@ LMM/
 | What to do right now | `DASHBOARD.md` |
 | Find a grant section | `grants/<grant>/index.md` |
 | Start a new grant | `grants/template/index.md` |
+| Architecture | `plans/ARCHITECTURE.md` |
 | Build plan | `plans/build-plan.md` |
-| Infrastructure | `plans/cloud-architecture.md` |
-| AI architecture | `plans/ai-architecture.md` |
 | Core idea | `idea.md` |
