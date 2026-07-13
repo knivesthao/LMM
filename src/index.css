@@ -628,3 +628,186 @@ body {
   font-size: 0.8rem;
   font-weight: 600;
 }
+
+/* === Admin Panel === */
+
+.admin {
+  padding-top: 1rem;
+}
+
+.pending-count {
+  background: var(--accent);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.admin-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 0.5rem 0.5rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--accent);
+}
+
+.status-badge.confirmed {
+  background: rgba(78, 205, 196, 0.15);
+  color: #4ecdc4;
+}
+
+.status-badge.rejected {
+  background: rgba(136, 146, 176, 0.15);
+  color: var(--text-muted);
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 4px;
+  font-size: 0.9rem;
+}
+
+.action-btn:hover {
+  border-color: var(--text-muted);
+}
+
+.action-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.action-btn.confirm:hover {
+  border-color: #4ecdc4;
+  color: #4ecdc4;
+}
+
+.action-btn.reject:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* === Install Banner === */
+
+.install-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.install-banner p {
+  font-size: 0.85rem;
+  margin: 0;
+  flex: 1;
+}
+
+.install-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* === Mobile touch targets === */
+
+@media (max-width: 360px) {
+  .app {
+    padding: 0.5rem;
+  }
+
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .card-body h2 {
+    font-size: 0.8rem;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+  }
+
+  .library-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.4rem 0.3rem;
+    font-size: 0.75rem;
+  }
+}

@@ -316,10 +316,10 @@ Expect 2-5 min per scene. GPU queues AI inference between render jobs.
 ## PART C: Admin + Infrastructure
 
 ### C1 — Admin panel
-⬜
+✅
 
 ```
-Simple admin panel for the platform.
+Admin panel for the platform.
 
 Supabase's built-in dashboard handles most admin needs:
 - Table editor for browsing/editing payments, users, content directly
@@ -335,7 +335,7 @@ Protect admin routes: check user role in Supabase JWT (set admin users via Supab
 ```
 
 ### C2 — PWA + Mobile optimizations
-⬜
+✅
 
 ```
 Make the library installable as a PWA and optimized for low-end Android.
@@ -395,8 +395,8 @@ PART B: Creator Studio ⬜ Not started
 ⬜ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline
 
-PART C: Admin + Infrastructure ⬜ Not started
-⬜ C1 — Admin panel
-⬜ C2 — PWA + Mobile optimizations
-⬜ C3 — Content packaging + upload pipeline
+PART C: Admin + Infrastructure
+✅ C1 — Admin panel
+✅ C2 — PWA + Mobile optimizations
+✅ C3 — Content packaging + upload pipeline
 ```
