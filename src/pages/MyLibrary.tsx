@@ -67,11 +67,18 @@ export function MyLibrary() {
         setBooks(content || []);
       }
 
-      // Check which content is downloaded
+      // Check which content is downloaded (parallel)
+      const results = await Promise.all(
+        contentIds.map((id) =>
+          getDownloadedScenes(id).then(
+            (scenes) => ({ id, hasScenes: scenes.length > 0 }),
+            () => ({ id, hasScenes: false })
+          )
+        )
+      );
       const downloaded = new Set<string>();
-      for (const id of contentIds) {
-        const scenes = await getDownloadedScenes(id);
-        if (scenes.length > 0) downloaded.add(id);
+      for (const r of results) {
+        if (r.hasScenes) downloaded.add(r.id);
       }
       setDownloadedIds(downloaded);
 

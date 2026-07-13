@@ -3,8 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 
-// useAuth is used by the mocked provider above — verify it resolves
-
 interface Content {
   id: string;
   title: string;
@@ -22,6 +20,7 @@ export function BookDetail() {
   const [book, setBook] = useState<Content | null>(null);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
+  const [purchaseError, setPurchaseError] = useState('');
   const { user } = useAuth();
 
   useEffect(() => {
@@ -46,12 +45,13 @@ export function BookDetail() {
 
   async function handleBuy() {
     if (!user) {
-      navigate('/login');
+      setPurchaseError('Please log in to purchase books.');
       return;
     }
 
     if (!book || !id) return;
     setPurchasing(true);
+    setPurchaseError('');
 
     // In dev mode, skip payment and purchase directly
     if (import.meta.env.DEV) {
@@ -59,24 +59,30 @@ export function BookDetail() {
         user_id: user.id,
         content_id: id,
       });
-      if (!error) {
+
+      if (error) {
+        setPurchaseError('Purchase failed. Please try again.');
+      } else {
         navigate('/my-library');
+        return;
       }
-      setPurchasing(false);
-      return;
+    } else {
+      // Real flow: record as pending payment
+      const { error } = await supabase.from('payments').insert({
+        user_id: user.id,
+        content_id: id,
+        amount_kip: book.price_kip,
+        status: 'pending',
+      });
+
+      if (error) {
+        setPurchaseError('Payment failed. Please try again.');
+      } else {
+        navigate(`/purchase/${id}`);
+        return;
+      }
     }
 
-    // Real flow: record as pending payment
-    const { error } = await supabase.from('payments').insert({
-      user_id: user.id,
-      content_id: id,
-      amount_kip: book.price_kip,
-      status: 'pending',
-    });
-
-    if (!error) {
-      navigate(`/purchase/${id}`);
-    }
     setPurchasing(false);
   }
 
@@ -109,6 +115,7 @@ export function BookDetail() {
           </div>
           <p className="description">{book.description}</p>
           <p className="price">{book.price_kip.toLocaleString()} kip</p>
+          {purchaseError && <p className="error-message">{purchaseError}</p>}
           <button
             className="buy-btn"
             onClick={handleBuy}

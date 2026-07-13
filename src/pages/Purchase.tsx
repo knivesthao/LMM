@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
@@ -26,17 +26,28 @@ export function Purchase() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const redirectTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimer.current) clearTimeout(redirectTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     async function fetchBook() {
       if (!id) return;
-      const { data } = await supabase
+      const { data, error: fetchError } = await supabase
         .from('content')
         .select('id, title, creator_name, cover_image_url, price_kip')
         .eq('id', id)
         .single();
 
-      if (data) setBook(data);
+      if (fetchError) {
+        console.error('Failed to load book:', fetchError.message);
+      } else if (data) {
+        setBook(data);
+      }
       setLoading(false);
     }
 
@@ -62,7 +73,7 @@ export function Purchase() {
       }
 
       setSubmitted(true);
-      setTimeout(() => navigate('/my-library'), 2000);
+      redirectTimer.current = setTimeout(() => navigate('/my-library'), 2000);
       return;
     }
 

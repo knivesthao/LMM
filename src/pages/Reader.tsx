@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import {
@@ -30,6 +30,7 @@ export function Reader() {
   const [loading, setLoading] = useState(true);
   const [downloadingAll, setDownloadingAll] = useState(false);
   const [progress, setProgress] = useState(0);
+  const loadingRef = useRef<Set<string>>(new Set());
 
   // Load manifest
   useEffect(() => {
@@ -72,51 +73,54 @@ export function Reader() {
   }, [id]);
 
   // Load current scene from cache or network
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!manifest || !id) return;
 
     const scene = manifest.scenes[currentScene];
     if (!scene) return;
 
-    const state = sceneStates.get(scene.number);
+    const key = `${id}-${scene.number}`;
+    if (loadingRef.current.has(key)) return; // Already loading
 
-    if (state === 'cached') {
-      // Load from IndexedDB
+    if (sceneStates.get(scene.number) === 'cached') {
       getScene(id, scene.number).then((html) => setSceneHtml(html));
-    } else if (state === 'done') {
-      // Scene was fetched but not cached (rare)
-      fetch(scene.url)
-        .then((r) => r.text())
-        .then((html) => setSceneHtml(html));
-    } else {
-      // Fetch from network, cache it
-      setSceneHtml(null);
-      setSceneStates((prev) => {
-        const next = new Map(prev);
-        next.set(scene.number, 'downloading');
-        return next;
-      });
-
-      fetch(scene.url)
-        .then((r) => r.text())
-        .then((html) => {
-          setSceneHtml(html);
-          storeScene(id, scene.number, html, scene.url);
-          setSceneStates((prev) => {
-            const next = new Map(prev);
-            next.set(scene.number, 'cached');
-            return next;
-          });
-        })
-        .catch(() => {
-          setSceneStates((prev) => {
-            const next = new Map(prev);
-            next.set(scene.number, 'pending');
-            return next;
-          });
-        });
+      return;
     }
-  }, [manifest, currentScene, id, sceneStates]);
+
+    // Fetch from network, cache it
+    loadingRef.current.add(key);
+    setSceneHtml(null);
+    setSceneStates((prev) => {
+      const next = new Map(prev);
+      next.set(scene.number, 'downloading');
+      return next;
+    });
+
+    fetch(scene.url)
+      .then((r) => r.text())
+      .then((html) => {
+        setSceneHtml(html);
+        return storeScene(id, scene.number, html, scene.url);
+      })
+      .then(() => {
+        setSceneStates((prev) => {
+          const next = new Map(prev);
+          next.set(scene.number, 'cached');
+          return next;
+        });
+      })
+      .catch(() => {
+        setSceneStates((prev) => {
+          const next = new Map(prev);
+          next.set(scene.number, 'pending');
+          return next;
+        });
+      })
+      .finally(() => {
+        loadingRef.current.delete(key);
+      });
+  }, [manifest, currentScene, id]);
 
   const goToScene = useCallback(
     (index: number) => {
@@ -230,7 +234,7 @@ export function Reader() {
             srcDoc={sceneHtml}
             title={`Scene ${currentScene + 1}`}
             className="scene-frame"
-            sandbox="allow-same-origin"
+            sandbox=""
           />
         ) : (
           <div className="loading">
