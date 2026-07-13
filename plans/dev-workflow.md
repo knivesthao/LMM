@@ -1,6 +1,6 @@
 # LMM — Local Development Workflow
 
-> How to run everything on your machine without Paperspace, Docker, or cloud costs.
+> How to run everything on your machine without RunPod, Docker, or cloud costs.
 > You only spin up what you're working on.
 
 ---
@@ -9,12 +9,12 @@
 
 | When working on | You need running | You DON'T need |
 |----------------|-----------------|----------------|
-| **Library UI** (browse, buy, read) | React dev server + Supabase (cloud) | Workers, Paperspace, UE5 |
-| **Creator Editor UI** (write stories) | React dev server + Supabase (cloud) | Paperspace, UE5 |
-| **Creator Generate** (trigger renders) | React + Workers (local) + Supabase | Paperspace (returns mock) |
-| **API routes** (Workers logic) | Workers dev server (local) + Supabase | Paperspace, UE5 |
-| **UE5 Blueprint pipeline** (B2, B5) | UE5 on Paperspace GPU only | Everything else |
-| **Llama 3 / SDXL** (B3, B4) | On Paperspace GPU only | Everything else |
+| **Library UI** (browse, buy, read) | React dev server + Supabase (cloud) | Workers, RunPod, UE5 |
+| **Creator Editor UI** (write stories) | React dev server + Supabase (cloud) | RunPod, UE5 |
+| **Creator Generate** (trigger renders) | React + Workers (local) + Supabase | RunPod (returns mock) |
+| **API routes** (Workers logic) | Workers dev server (local) + Supabase | RunPod, UE5 |
+| **UE5 Blueprint pipeline** (B2, B5) | UE5 on RunPod GPU only | Everything else |
+| **Llama 3 / SDXL** (B3, B4) | On RunPod GPU only | Everything else |
 
 **For 90% of development, you only need React + Supabase.**
 
@@ -128,14 +128,14 @@ Workers runs on `http://localhost:8787`. Change the API base URL in the React ap
 const API_BASE = import.meta.env.DEV ? 'http://localhost:8787' : '/api';
 ```
 
-### For Paperspace work (UE5 + AI)
+### For RunPod work (UE5 + AI)
 
 **This only happens on the cloud GPU, never locally.** You make changes to the Python scripts in `paperspace/`, push to GitHub, and the GPU auto-pulls and restarts.
 
-If you absolutely need to test UE5 Blueprints locally (B2, B5), you'd need a machine that can run UE5 — which you've already said you don't have. So this work IS the Paperspace machine. You access it via remote desktop:
+If you absolutely need to test UE5 Blueprints locally (B2, B5), you'd need a machine that can run UE5 — which you've already said you don't have. So this work IS the RunPod machine. You access it via remote desktop:
 
 ```
-1. SSH into Paperspace
+1. SSH into RunPod
 2. git pull
 3. Make Blueprint changes in UE5 Editor (remote desktop)
 4. Push to GitHub
@@ -155,7 +155,7 @@ cd LMM && npm run dev                         # Terminal 2
 
 # When editing UE5 or Python backend
 git commit -am "fix: updated Blueprint orchestrator"
-git push                                      # → auto-deploys to Paperspace
+git push                                      # → auto-deploys to RunPod
 
 # Full deploy (rare — once a week maybe)
 git push origin main                          # → deploys everything
@@ -167,7 +167,7 @@ git push origin main                          # → deploys everything
 |------|------|---------|
 | Morning | Fix library catalog layout | `npm run dev` → edit React components → save → browser refreshes |
 | Midday | Add search filter API | `wrangler dev` → edit Workers route → save → test with curl |
-| Afternoon | Tweak UE5 render pipeline | SSH into Paperspace → edit Blueprint in UE5 → push to GitHub |
+| Afternoon | Tweak UE5 render pipeline | SSH into RunPod → edit Blueprint in UE5 → push to GitHub |
 | End of day | Deploy everything | `git push` |
 
 **You never switch project folders or manage multiple repos. You have one project open in your editor. You only run the parts you're actively working on.**

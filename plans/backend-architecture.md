@@ -1,6 +1,6 @@
 # LMM — Backend Architecture (How It All Connects)
 
-> **Short answer:** Yes, we need a real backend. Cloudflare Workers handles the *public gateway* (routing, auth, fast operations). The Paperspace GPU runs a *full Python backend* (Flask/FastAPI) that handles all the heavy work. The frontend talks to Workers, not directly to Paperspace.
+> **Short answer:** Yes, we need a real backend. Cloudflare Workers handles the *public gateway* (routing, auth, fast operations). The RunPod GPU runs a *full Python backend* (Flask/FastAPI) that handles all the heavy work. The frontend talks to Workers, not directly to RunPod.
 
 ---
 
@@ -27,8 +27,8 @@
 │  Routes:                                                             │
 │    GET /api/content     ──►  Supabase REST                           │
 │    POST /api/purchase   ──►  Supabase REST                           │
-│    POST /api/render     ──►  Paperspace Flask API                    │
-│    GET  /api/render/:id ──►  Paperspace Flask API                    │
+│    POST /api/render     ──►  RunPod Flask API                    │
+│    GET  /api/render/:id ──►  RunPod Flask API                    │
 │                                                                      │
 │  Does NOT do any heavy work — just routes and validates.             │
 └────────────────────────────────────────────────────────────────────┘
@@ -39,7 +39,7 @@
 │  LAYER 3: COMPUTE + DATA                                           │
 │                                                                     │
 │  ┌─────────────────────┐   ┌────────────────────────────┐          │
-│  │ SUABASE (cloud)      │   │ PAPERSPACE GPU             │          │
+│  │ SUABASE (cloud)      │   │ RUNPOD GPU                │
 │  │                      │   │                            │          │
 │  │ Postgres database   │   │ Flask/FastAPI Python backend│          │
 │  │ Phone auth          │   │   ↓                         │          │
@@ -91,7 +91,7 @@ Creator clicks "Generate" on a scene
      ────► Returns { job_id, status: "queued" } immediately
 ◄──── Frontend starts polling every 3 seconds
 
-Meanwhile on Paperspace GPU:
+Meanwhile on RunPod GPU:
 ─────────────────────────────────
 The Flask API polls Supabase render_queue table every 10 seconds:
   GET /pending-items → finds new job
@@ -167,12 +167,12 @@ Workers is just a **thin routing layer** — typically ~50 lines total for the e
 
 ---
 
-## The Paperspace Backend (Where the Real Work Happens)
+## The RunPod Backend (Where the Real Work Happens)
 
 This is the "real backend" you're thinking of. It's a Python Flask/FastAPI server:
 
 ```python
-# paperspace_server.py — runs on the GPU machine
+# runpod_server.py — runs on the GPU machine
 from fastapi import FastAPI
 from ollama import chat  # interacts with local Llama 3
 
@@ -203,13 +203,13 @@ def start_render(job: RenderJob):
     supabase.table("render_queue").update({"status": "complete"}).eq("id", job.id)
 ```
 
-This is a proper backend server. It runs continuously on the Paperspace GPU machine.
+This is a proper backend server. It runs continuously on the RunPod GPU machine.
 
 ---
 
 ## Truth Table: What Each Layer Handles
 
-| Operation | Workers (CF) | Why it works | Supabase | Paperspace Flask |
+| Operation | Workers (CF) | Why it works | Supabase | RunPod Flask |
 |-----------|-------------|-------------|----------|------------------|
 | **User login** | ✅ Routes to Supabase | Just returns JWT | ✅ Processes auth | ❌ |
 | **Browse library** | ✅ Routes to Supabase | <30ms DB query | ✅ Returns content | ❌ |
@@ -226,7 +226,7 @@ This is a proper backend server. It runs continuously on the Paperspace GPU mach
 
 ## What This Means in Practice
 
-**Workers is NOT a backend server.** It's a routing gateway — like a receptionist that directs calls to the right department (Supabase for data, Paperspace for compute). It never does the actual work.
+**Workers is NOT a backend server.** It's a routing gateway — like a receptionist that directs calls to the right department (Supabase for data, RunPod for compute). It never does the actual work.
 
 **The PAPERSAPE machine IS the real backend.** It runs:
 - A Flask/FastAPI server (public endpoint: not exposed to internet, only accessible from Workers)
@@ -235,7 +235,7 @@ This is a proper backend server. It runs continuously on the Paperspace GPU mach
 - UE5 (rendering engine)
 - Queue worker (polls Supabase for new jobs)
 
-**The frontend never talks to Paperspace directly.** Everything goes through Workers. The frontend doesn't need to know that Paperspace exists — it just calls Workers endpoints and waits for results.
+**The frontend never talks to RunPod directly.** Everything goes through Workers. The frontend doesn't need to know that RunPod exists — it just calls Workers endpoints and waits for results.
 
 ---
 
@@ -247,4 +247,4 @@ You could. But Workers is better for the gateway layer because:
 - **SE Asia edge** — Workers run in Singapore, close to users
 - **It's just a router** — there's no business logic complex enough to need a full server here
 
-The only server we manage is the Paperspace GPU — and that's because it has hardware (GPU) that can't exist anywhere else.
+The only server we manage is the RunPod GPU — and that's because it has hardware (GPU) that can't exist anywhere else.

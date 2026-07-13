@@ -1,7 +1,7 @@
 # LMM — Build Plan (Prompt-by-Prompt)
 
 > **Build order:** Digital Library first → Creator Studio second.
-> **Architecture:** Cloudflare Pages (SPA) + Cloudflare Workers (API gateway) + Supabase (database + auth) + Paperspace GPU (UE5 + AI inference) + R2 (content storage).
+> **Architecture:** Cloudflare Pages (SPA) + Cloudflare Workers (API gateway) + Supabase (database + auth) + RunPod GPU (UE5 + AI inference) + R2 (content storage).
 > See `cloud-architecture.md` for infrastructure details.
 > Each prompt is self-contained — copy one at a time into a chat.
 > **Status:** `⬜` not started, `🟡` in progress, `✅` done.
@@ -126,17 +126,17 @@ Library works offline — shows cached data from last online session.
 
 ## PART B: Creator Studio
 
-### B1 — Set up Paperspace GPU + UE5
-⬜
+### B1 — Set up RunPod GPU + UE5
+✅
 
 ```
 Provision the cloud GPU where all UE5 development and rendering will happen.
 
-1. Create Paperspace account (paperspace.com)
-2. Provision a P5000 GPU machine: 16GB VRAM, 30GB RAM, 8 vCPU, $0.78/hr on-demand
+1. Create RunPod account (runpod.io)
+2. Provision an A5000 GPU: 24GB VRAM, ~$0.29/hr on-demand ($0.19/hr spot for dev)
 3. Install Unreal Engine 5 on it
 4. Install Python 3 + Flask (for the REST API that will control UE5)
-5. Set up remote desktop access (Paperspace provides this)
+5. Set up remote desktop or SSH access
 6. Verify UE5 launches and runs headless
 7. Build a health check script: launch UE5 in headless mode, render a blank scene, exit
 8. Configure auto-shutdown after 30 min of inactivity (save money)
@@ -148,7 +148,7 @@ Goal: you can remote into the GPU, run UE5, and trigger renders programmatically
 ⬜
 
 ```
-Build the UE5 pipeline on the Paperspace GPU. This turns a scene description into a rendered image.
+Build the UE5 pipeline on the RunPod GPU. This turns a scene description into a rendered image.
 
 Inside UE5:
 1. **Base mesh library** — ~20 simple 3D models:
@@ -170,16 +170,16 @@ Inside UE5:
 Goal: UE5 on the cloud GPU reads a scene description → produces a rendered output, no human interaction.
 ```
 
-### B3 — Self-host Llama 3 on Paperspace (narration → scene JSON)
+### B3 — Self-host Llama 3 on RunPod (narration → scene JSON)
 ⬜
 
 ```
-Set up a self-hosted LLM on the Paperspace GPU to convert story narration into structured scene data. No external API costs — runs on the same GPU during idle time between UE5 renders.
+Set up a self-hosted LLM on the RunPod GPU to convert story narration into structured scene data. No external API costs — runs on the same GPU during idle time between UE5 renders.
 
 Install and configure:
 1. Install Ollama: curl -fsSL https://ollama.com/install.sh | sh
 2. Pull Llama 3.1 8B: ollama pull llama3.1:8b
-   - This is a quantized model that runs in ~6GB VRAM — fits alongside UE5 on the P5000 (16GB)
+   - This is a quantized model that runs in ~6GB VRAM — fits alongside UE5 on the A5000 (24GB)
 3. Start the Ollama API server: ollama serve
    - This exposes a local REST API at port 11434
 4. Test it: curl http://localhost:11434/api/chat with a simple prompt
@@ -190,7 +190,7 @@ Build the system prompt — this is the most important part. The prompt tells th
 - Output EXACT JSON matching our UE5 Blueprint format
 - Coordinates must be within the defined stage area
 
-Build the Python bridge (runs on the Paperspace machine):
+Build the Python bridge (runs on the RunPod machine):
 - A simple Flask endpoint: POST /api/parse-narration
 - Accepts: { "narration": "A boy walks through a rice field at sunset..." }
 - Calls Ollama at http://localhost:11434/api/chat with narration + system prompt
@@ -199,15 +199,15 @@ Build the Python bridge (runs on the Paperspace machine):
 Test with a sample narration → verify it returns valid JSON.
 ```
 
-### B4 — Self-host Stable Diffusion on Paperspace (image generation)
+### B4 — Self-host Stable Diffusion on RunPod (image generation)
 ⬜
 
 ```
-Set up AI image generation on the Paperspace GPU. Runs on the same GPU during idle time between UE5 renders. Zero external API costs.
+Set up AI image generation on the RunPod GPU. Runs on the same GPU during idle time between UE5 renders. Zero external API costs.
 
 Install and configure:
 1. Install ComfyUI (popular SD interface): git clone https://github.com/comfyanonymous/ComfyUI
-2. It runs on the same Paperspace GPU — uses VRAM when UE5 isn't rendering
+2. It runs on the same RunPod GPU — uses VRAM when UE5 isn't rendering
 3. Download SDXL model: sd_xl_base_1.0.safetensors
 4. Download IP-Adapter model (for character consistency across scenes)
 5. Start ComfyUI with the --listen flag so the API is accessible: python main.py --listen
@@ -231,7 +231,7 @@ For the prototype, you can also use UE5's built-in materials (solid colors, proc
 ⬜
 
 ```
-Build the custom comic post-process material in UE5 on the Paperspace GPU.
+Build the custom comic post-process material in UE5 on the RunPod GPU.
 
 The rendered output should look like a comic book, not photorealistic 3D. Build a post-process material:
 
@@ -263,7 +263,7 @@ Build on Cloudflare Pages:
   - Left: text input per panel — creator writes narration in Lao or English
   - Right: preview — rendered panel output
 - "Add Panel" button
-- "Generate" per panel → sends narration, triggers full pipeline on Paperspace, returns preview
+- "Generate" per panel → sends narration, triggers full pipeline on RunPod, returns preview
 - Drag/drop to reorder panels
 - Metadata: title, description, language, reading level, price in kip
 
@@ -275,14 +275,14 @@ Build on Cloudflare Pages:
 - Edit metadata, preview full comic/book, "Publish" button
 
 Supabase: projects + scenes tables. Workers routes CRUD to Supabase.
-POST /api/studio/generate → triggers the Paperspace render pipeline (B7).
+POST /api/studio/generate → triggers the RunPod render pipeline (B7).
 ```
 
 ### B7 — Connect Creator Studio to the rendering pipeline
 ⬜
 
 ```
-Connect the Cloudflare creator app to the Paperspace GPU rendering pipeline.
+Connect the Cloudflare creator app to the RunPod GPU rendering pipeline.
 
 When a creator hits "Generate", the full chain fires on the single GPU machine:
 Llama 3 (scene parse) → Stable Diffusion (image gen) → UE5 (render) → R2 → preview.
@@ -291,12 +291,12 @@ Build the orchestration Worker:
 
 **POST /api/studio/generate**
 1. Receives { scene_text, project_id, scene_number }
-2. Calls Paperspace GPU REST API: POST /parse-narration (B3 — self-hosted Llama 3) → scene JSON
-3. Calls Paperspace GPU REST API: POST /generate-images (B4 — self-hosted SD) → image URLs
-4. Calls Paperspace GPU REST API: POST /render — scene JSON + image URLs → Blueprint → MRQ render
+2. Calls RunPod GPU REST API: POST /parse-narration (B3 — self-hosted Llama 3) → scene JSON
+3. Calls RunPod GPU REST API: POST /generate-images (B4 — self-hosted SD) → image URLs
+4. Calls RunPod GPU REST API: POST /render — scene JSON + image URLs → Blueprint → MRQ render
 5. Returns { job_id, status: "processing" }
 
-**Paperspace GPU REST API** (Python Flask, runs on the GPU machine):
+**RunPod GPU REST API** (Python Flask, runs on the GPU machine):
 - POST /parse-narration — calls Ollama (Llama 3) → returns scene JSON
 - POST /generate-images — calls ComfyUI (Stable Diffusion) → returns image URLs
 - POST /render — queues a UE5 render job, waits for idle GPU, runs Blueprint → MRQ, uploads output to R2
@@ -329,7 +329,7 @@ Supabase's built-in dashboard handles most admin needs:
 Build the one piece Supabase doesn't cover:
 - /admin/payments — table of pending QR/WhatsApp payments with Confirm/Reject buttons
   - Supabase: payments table already has status column. Admin actions update it.
-- /admin/generation-queue — monitor Paperspace render pipeline (B7). Filter by status.
+- /admin/generation-queue — monitor RunPod render pipeline (B7). Filter by status.
 
 Protect admin routes: check user role in Supabase JWT (set admin users via Supabase dashboard).
 ```
@@ -356,7 +356,7 @@ Test: Chrome DevTools → Moto G4, 2G throttling. App loads under 3 seconds.
 ⬜
 
 ```
-Build the content packaging pipeline on the Paperspace GPU.
+Build the content packaging pipeline on the RunPod GPU.
 
 When a creator publishes, the system:
 1. Takes rendered image sequence from MRQ output
@@ -366,7 +366,7 @@ When a creator publishes, the system:
 5. Uploads all to R2: /content/{id}/scene_{n}.webp + manifest.json + cover.webp
 6. Inserts metadata into D1 content table
 
-Build as a Python script on the Paperspace GPU machine that:
+Build as a Python script on the RunPod GPU machine that:
 - Takes a folder path of rendered images
 - Takes metadata as arguments
 - Runs WebP compression (Pillow)
@@ -387,10 +387,10 @@ PART A: Digital Library ✅ COMPLETE
 ✅ A5 — User library (purchased content + download status)
 
 PART B: Creator Studio ⬜ Not started
-⬜ B1 — Set up Paperspace GPU + UE5
+⬜ B1 — Set up RunPod GPU + UE5
 ⬜ B2 — UE5 Blueprint orchestrator (first render test)
-⬜ B3 — Self-host Llama 3 on Paperspace (narration → scene JSON)
-⬜ B4 — Self-host Stable Diffusion on Paperspace (image generation)
+⬜ B3 — Self-host Llama 3 on RunPod (narration → scene JSON)
+⬜ B4 — Self-host Stable Diffusion on RunPod (image generation)
 ⬜ B5 — Comic post-process shader
 ⬜ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline

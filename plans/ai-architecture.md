@@ -1,6 +1,6 @@
 # LMM — AI Architecture: What Do We Actually Need AI For?
 
-> **Principle:** Use the minimum AI necessary. Self-host everything on the Paperspace GPU that we're already paying for. Zero external AI API costs.
+> **Principle:** Use the minimum AI necessary. Self-host everything on the RunPod GPU that we're already paying for. Zero external AI API costs.
 
 ---
 
@@ -51,35 +51,35 @@ UE5 does **not** have a "type a prompt and it builds a 3D scene" feature. Here's
 
 ---
 
-## Recommended Approach: Self-Host on the Paperspace GPU
+## Recommended Approach: Self-Host on the RunPod GPU
 
-The Paperspace P5000 (16GB VRAM) is already running 24/7 during development. Between UE5 renders, it sits idle. We use that idle time for AI inference.
+The RunPod A5000 (24GB VRAM) is already running 24/7 during development. Between UE5 renders, it sits idle. We use that idle time for AI inference.
 
 ### What runs on the GPU:
 
 | Task | Model | VRAM | Cost |
 |------|-------|------|------|
-| **UE5 rendering** | Unreal Engine 5 | ~4–6GB (while rendering) | $461/mo |
+| **UE5 rendering** | Unreal Engine 5 | ~4–6GB (while rendering) | $0.29/hr (on-demand) |
 | **LLM (narration → JSON)** | Llama 3.1 8B (quantized, Q4) | ~6GB | $0 (same GPU, idle time) |
 | **Image generation** | Stable Diffusion XL | ~8GB | $0 (same GPU, idle time) |
 
 The GPU switches between rendering and inference. While no one is rendering, it serves the LLM + SD. While rendering, the AI jobs queue and wait.
 
-**Total AI cost: $0.** Everything runs on the same Paperspace machine.
+**Total AI cost: $0.** Everything runs on the same RunPod machine.
 
 ### Comparison:
 
 | Approach | Monthly AI Cost | Management |
 |----------|----------------|------------|
 | OpenAI + Replicate (was going to do) | ~$250/mo | Zero management |
-| **Self-host on Paperspace GPU (recommended)** | **$0** | Must install Llama + SD once |
+| **Self-host on RunPod GPU (recommended)** | **$0** | Must install Llama + SD once |
 | DeepSeek API (cheapest alternative) | ~$10/mo | Pay-per-call, no management |
 
 ---
 
 ## How Self-Hosting Works
 
-**Setting up Llama 3 on Paperspace (once):**
+**Setting up Llama 3 on RunPod (once):**
 ```
 1. Install Ollama (simple: curl -fsSL https://ollama.com/install.sh | sh)
 2. Pull the model: ollama pull llama3.1:8b
@@ -87,7 +87,7 @@ The GPU switches between rendering and inference. While no one is rendering, it 
 4. Call from Python: POST /api/chat with the narration + system prompt → get JSON
 ```
 
-**Setting up Stable Diffusion on Paperspace (once):**
+**Setting up Stable Diffusion on RunPod (once):**
 ```
 1. Install ComfyUI (popular SD interface)
 2. Load SDXL model + IP-Adapter for character consistency
@@ -102,6 +102,6 @@ Both run alongside UE5 on the same GPU, taking turns based on demand.
 ## What This Means for the Total Budget
 
 **Previous budget (external APIs):** OpenAI $1,500 + Replicate $1,500 = $3,000 in API costs
-**New budget (self-hosted):** $0 in API costs. Paperspace GPU covers everything.
+**New budget (self-hosted):** $0 in API costs. RunPod GPU covers everything.
 
 We can drop the OpenAI and Replicate line items from the grant budget entirely. The total drops from ~$65K to ~$62K.

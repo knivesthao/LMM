@@ -152,7 +152,7 @@ After free tier exhaustion (>50K users, >high R2 usage):
 | Doc | What it covers |
 |-----|---------------|
 | `plans/build-plan.md` | 15-step prompt-by-prompt build plan with status |
-| `plans/backend-architecture.md` | Workers as router, DB functions for business logic, Paperspace/RunPod backend |
+| `plans/backend-architecture.md` | Workers as router, DB functions for business logic, RunPod/RunPod backend |
 | `plans/ai-architecture.md` | Self-hosted Llama 3 + SDXL on shared GPU |
 | `plans/sequential-plan.md` | Grant execution pipeline (Epic → ISIF → follow-on) |
 | `plans/dev-workflow.md` | Local development setup, Docker, testing |

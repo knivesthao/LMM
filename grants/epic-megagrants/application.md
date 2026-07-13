@@ -112,21 +112,21 @@ This project stretches Unreal Engine into territory it has never occupied: servi
 
 **$50,000–$100,000**
 
-We are requesting approximately $62,000 for a 12-month build. All development runs on a cloud GPU — we have no local machine capable of UE5. AI inference (LLM for scene parsing + Stable Diffusion for image generation) runs on the same GPU during idle time between renders, eliminating external API costs. Full cost estimates will be refined once prototype architecture is finalized, but the core breakdown is:
+We are requesting approximately $65,000 for a 12-month build. All development runs on a cloud GPU — we have no local machine capable of UE5. We use RunPod (cheapest GPU option at $0.19/hr spot for dev, $0.29/hr on-demand for production) to run UE5 development, AI inference (Llama 3 for scene parsing + Stable Diffusion for image generation), and rendering — all on the same A5000 GPU during idle time between renders, eliminating external AI API costs.
 
 | Category | Estimated | Detail |
 |----------|-----------|--------|
-| Personnel — AI Developer (1 FTE, 12 mo) | $18,000 | UE5 Blueprint scripting, AI pipeline integration, full-stack web development, mobile packaging. All technical development — uses AI assistance throughout. |
-| Personnel — Operations Manager (1 FTE, 12 mo) | $18,000 | Studio space management, creator recruitment and outreach, school partnerships, marketing, payment integration coordination, content operations. |
+| Personnel — AI Developer (1 FTE, 12 mo) | $24,000 | Unreal Engine 5 Blueprint scripting, AI pipeline integration, full-stack web development, mobile packaging. All technical development — uses AI assistance throughout. $2,000/month. |
+| Personnel — Operations Manager (1 FTE, 12 mo) | $18,000 | Studio space management, creator recruitment and outreach, school partnerships, marketing, payment integration coordination, content operations. $1,500/month. |
 | Personnel — QA / Content Writers (part-time, 2 people, months 5–12) | $8,000 | Part-time QA testing during later phases. Also write and produce our first content titles — real Lao stories that validate the pipeline with authentic local material. |
 | Studio Space | $5,000 | Rent for content creation and team workspace in Vientiane |
 | Equipment | $3,000 | Development and testing devices, content creation tools |
-| Paperspace GPU — UE5 development (months 1–5) | $390 | Cloud GPU for UE5 development. P5000 (16GB VRAM) at $0.78/hr on-demand. Estimated 100 hours/month × 5 months. Also runs self-hosted Llama 3 (scene parsing) + Stable Diffusion (image gen) during idle time between renders — no external AI API costs. |
-| Paperspace GPU — UE5 + AI inference (months 6–12) | $3,227 | Monthly plan ($461/mo × 7 mo) once creators are actively generating content. Always-on GPU handles UE5 rendering, Llama 3 LLM calls, and Stable Diffusion image generation on the same machine. |
+| RunPod GPU (months 1–6, development) | $114 | RunPod A5000 (24GB VRAM) at $0.19/hr spot pricing, ~100 hours/month × 6 months. Also runs self-hosted Llama 3 (scene parsing) + Stable Diffusion (image gen) during idle time between renders — no external AI API costs. |
+| RunPod GPU (months 7–12, production) | $312 | RunPod A5000 at $0.29/hr on-demand, ~180 hours/month × 6 months. Handles UE5 rendering, Llama 3 LLM calls, and Stable Diffusion image generation on the same machine. |
 | Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), Supabase (free tier for prototype), domain (~$10) |
 | Content Commissioning | $3,000 | Flat fees to Lao creators for initial library titles beyond what in-house QA/writers produce |
 | Estimated Taxes (reserve) | $2,700 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses deductible — conservative reserve on projected net profit. |
-| **Total** | **~$62,117** | |
+| **Total** | **~$64,926** | |
 
 **Note on items not shown:**
 - PWA mobile client development → part of AI Developer's scope (in salary)
