@@ -2,7 +2,7 @@
 """
 LMM Content Packaging Script
 
-Runs on the Paperspace GPU machine after UE5 finishes rendering.
+Runs on the RunPod GPU machine after UE5 finishes rendering.
 Compresses rendered images to WebP, generates a scene manifest,
 uploads everything to Cloudflare R2, and inserts metadata into Supabase.
 
@@ -18,7 +18,7 @@ Usage:
         --price 5000 \\
         --creator "Somsack"
 
-Requires: pip install -r paperspace/requirements.txt
+Requires: pip install -r gpu/requirements.txt
 """
 
 import argparse

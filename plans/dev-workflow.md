@@ -130,7 +130,7 @@ const API_BASE = import.meta.env.DEV ? 'http://localhost:8787' : '/api';
 
 ### For RunPod work (UE5 + AI)
 
-**This only happens on the cloud GPU, never locally.** You make changes to the Python scripts in `paperspace/`, push to GitHub, and the GPU auto-pulls and restarts.
+**This only happens on the cloud GPU, never locally.** You make changes to the Python scripts in `gpu/`, push to GitHub, and the GPU auto-pulls and restarts.
 
 If you absolutely need to test UE5 Blueprints locally (B2, B5), you'd need a machine that can run UE5 — which you've already said you don't have. So this work IS the RunPod machine. You access it via remote desktop:
 
