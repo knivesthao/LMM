@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
@@ -19,11 +19,7 @@ export function Admin() {
   const [filter, setFilter] = useState<'pending' | 'all'>('pending');
   const [confirming, setConfirming] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    loadPayments();
-  }, [filter]);
-
-  async function loadPayments() {
+  const loadPayments = useCallback(async () => {
     setLoading(true);
     let query = supabase
       .from('payments')
@@ -42,15 +38,10 @@ export function Admin() {
       return;
     }
 
-    // Enrich with content titles and user phone numbers
     const enriched = await Promise.all(
       data.map(async (payment: Payment) => {
         const [contentRes, userRes] = await Promise.all([
-          supabase
-            .from('content')
-            .select('title')
-            .eq('id', payment.content_id)
-            .single(),
+          supabase.from('content').select('title').eq('id', payment.content_id).single(),
           supabase.auth.admin.getUserById(payment.user_id),
         ]);
 
@@ -64,28 +55,42 @@ export function Admin() {
 
     setPayments(enriched);
     setLoading(false);
-  }
+  }, [filter]);
+
+  useEffect(() => {
+    loadPayments();
+  }, [loadPayments]);
 
   async function handleConfirm(paymentId: string) {
     setConfirming((prev) => new Set(prev).add(paymentId));
-    await supabase.rpc('confirm_payment', { p_payment_id: paymentId });
-    loadPayments();
-    setConfirming((prev) => {
-      const next = new Set(prev);
-      next.delete(paymentId);
-      return next;
-    });
+    try {
+      await supabase.rpc('confirm_payment', { p_payment_id: paymentId });
+      await loadPayments();
+    } catch {
+      // Failed — retryable
+    } finally {
+      setConfirming((prev) => {
+        const next = new Set(prev);
+        next.delete(paymentId);
+        return next;
+      });
+    }
   }
 
   async function handleReject(paymentId: string) {
     setConfirming((prev) => new Set(prev).add(paymentId));
-    await supabase.rpc('reject_payment', { p_payment_id: paymentId });
-    loadPayments();
-    setConfirming((prev) => {
-      const next = new Set(prev);
-      next.delete(paymentId);
-      return next;
-    });
+    try {
+      await supabase.rpc('reject_payment', { p_payment_id: paymentId });
+      await loadPayments();
+    } catch {
+      // Failed — retryable
+    } finally {
+      setConfirming((prev) => {
+        const next = new Set(prev);
+        next.delete(paymentId);
+        return next;
+      });
+    }
   }
 
   const pendingCount = payments.filter((p) => p.status === 'pending').length;
