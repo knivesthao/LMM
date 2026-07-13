@@ -16,9 +16,9 @@
 
 - **Dashboard** → `DASHBOARD.md` (read this first — all actions, sorted by deadline)
 - **File map** → `.agent/FILE_MAP.md` (find any file)
-- **Sequential plan** → `plans/sequential-plan.md` (phase-by-phase execution)
-- **Grants index** → `grants/index.md` (master list + links)
-- **Grant template** → `grants/template/` (copy for new grants)
+- **Sequential plan** → `docs/plans/sequential-plan.md` (phase-by-phase execution)
+- **Grants index** → `docs/grants/index.md` (master list + links)
+- **Grant template** → `docs/grants/template/` (copy for new grants)
 - **Token recovery** → `@token-saver` (when you hit the 1M limit)
 
 ## Token-Saving Rules

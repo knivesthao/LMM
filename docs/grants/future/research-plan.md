@@ -1,7 +1,7 @@
 # Future Grants — Research Plan
 
 > ✅ **RESEARCH COMPLETE (2026-07-12).** 8 grants researched, 3 viable, 6 dead ends.
-> **Historical reference only.** Active pursuit → `pursuit-plan.md`. Grant folders → `grants/usaid-div/`, `grants/unesco-pp/`.
+> **Historical reference only.** Active pursuit → `pursuit-plan.md`. Grant folders → `./usaid-div/`, `./unesco-pp/`.
 > **Do not re-run these prompts.** The research phase is closed.
 
 ---

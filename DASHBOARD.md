@@ -52,9 +52,9 @@ Parallel: PCF inquiry, ISIF 2027 prep → ready when windows open
 
 ## Action Detail (per grant)
 
-### Epic MegaGrants → [`grants/epic-megagrants/actions.md`](grants/epic-megagrants/actions.md)
-### PCF → [`grants/pcf/actions.md`](grants/pcf/actions.md)
-### ISIF Asia → [`grants/isif-asia/actions.md`](grants/isif-asia/actions.md)
-### DIV Fund → [`grants/usaid-div/index.md`](grants/usaid-div/index.md) *(waiting on prototype)*
-### UNESCO PP → [`grants/unesco-pp/index.md`](grants/unesco-pp/index.md)
-### GIF → [`grants/future/pursuit-plan.md`](grants/future/pursuit-plan.md)
+### Epic MegaGrants → [`grants/epic-megagrants/actions.md`](docs/grants/epic-megagrants/actions.md)
+### PCF → [`grants/pcf/actions.md`](docs/grants/pcf/actions.md)
+### ISIF Asia → [`grants/isif-asia/actions.md`](docs/grants/isif-asia/actions.md)
+### DIV Fund → [`grants/usaid-div/index.md`](docs/grants/usaid-div/index.md) *(waiting on prototype)*
+### UNESCO PP → [`grants/unesco-pp/index.md`](docs/grants/unesco-pp/index.md)
+### GIF → [`grants/future/pursuit-plan.md`](docs/grants/future/pursuit-plan.md)

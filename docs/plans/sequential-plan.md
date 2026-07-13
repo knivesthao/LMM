@@ -67,8 +67,8 @@
 
 > Cannot apply yet. DIV Fund requires a post-prototype innovation ready for real-world testing.
 > **Dependency:** Epic MegaGrants funds the prototype → build prototype → then apply to DIV Fund.
-> RFP and application form filed at `grants/usaid-div/div-rfp.md` and `grants/usaid-div/div-application.md`.
-> Prep notes drafted at `grants/usaid-div/application-prep.md`.
+> RFP and application form filed at `../../grants/usaid-div/div-rfp.md` and `../../grants/usaid-div/div-application.md`.
+> Prep notes drafted at `../../grants/usaid-div/application-prep.md`.
 > **No action until prototype exists.**
 
 | Step | Task | Trigger |
@@ -91,8 +91,8 @@
 
 ## Phase 7: Future Research (Complete ✅)
 
-> 8 grants researched on 2026-07-12. Results in `grants/future/research-plan.md`.
-> 3 viable targets → pursuit plan at `grants/future/pursuit-plan.md`.
+> 8 grants researched on 2026-07-12. Results in `../../grants/future/research-plan.md`.
+> 3 viable targets → pursuit plan at `../../grants/future/pursuit-plan.md`.
 > 6 confirmed dead ends. No further research needed.
 
 ---
