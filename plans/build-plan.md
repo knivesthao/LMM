@@ -11,7 +11,7 @@
 ## PART A: Digital Library
 
 ### A1 — Scaffold the project (Cloudflare + Supabase)
-⬜
+✅
 
 ```
 We're building LMM — a digital media library for comics and interactive children's books, primarily for Laos.
@@ -38,7 +38,7 @@ Goal: all services talking to each other. Supabase handles auth — no hand-roll
 ```
 
 ### A2 — Content catalog (browse + search)
-⬜
+✅
 
 ```
 Build the content catalog for the digital library.
@@ -59,7 +59,7 @@ Mobile-first — our users are on $50 Android phones.
 ```
 
 ### A3 — QR payment + WhatsApp confirmation flow
-⬜
+✅
 
 ```
 Build the purchase flow. Laos has no online payments — users pay by scanning a QR code, sending payment confirmation to WhatsApp, and we manually verify.
@@ -82,7 +82,7 @@ QR image is a static file in R2. WhatsApp number and instructions are configurab
 ```
 
 ### A4 — Download system (chunked, offline-capable)
-⬜
+✅
 
 ```
 Build the content download system. Media must work on unstable 2G connections in rural Laos.
@@ -107,7 +107,7 @@ Test with 3-5 placeholder scenes in R2.
 ```
 
 ### A5 — User library (purchased content)
-⬜
+✅
 
 ```
 Build the "My Library" section. Purchased content appears here. Users see what they own, what's downloaded, and read offline.
@@ -379,14 +379,14 @@ Runs as manual step during prototype — creator publishes → dev runs script �
 ## Status Tracking
 
 ```
-PART A: Digital Library
-⬜ A1 — Scaffold the project (Cloudflare Pages + Workers + Supabase + R2)
-⬜ A2 — Content catalog (browse + search)
-⬜ A3 — QR payment + WhatsApp confirmation flow
-⬜ A4 — Download system (chunked, offline-capable)
-⬜ A5 — User library (purchased content)
+PART A: Digital Library ✅ COMPLETE
+✅ A1 — Scaffold the project (React + Supabase + Cloudflare)
+✅ A2 — Content catalog (browse + search)
+✅ A3 — QR payment + WhatsApp confirmation flow
+✅ A4 — Download system (chunked, offline-capable, PWA)
+✅ A5 — User library (purchased content + download status)
 
-PART B: Creator Studio
+PART B: Creator Studio ⬜ Not started
 ⬜ B1 — Set up Paperspace GPU + UE5
 ⬜ B2 — UE5 Blueprint orchestrator (first render test)
 ⬜ B3 — Self-host Llama 3 on Paperspace (narration → scene JSON)
@@ -395,7 +395,7 @@ PART B: Creator Studio
 ⬜ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline
 
-PART C: Admin + Infrastructure
+PART C: Admin + Infrastructure ⬜ Not started
 ⬜ C1 — Admin panel
 ⬜ C2 — PWA + Mobile optimizations
 ⬜ C3 — Content packaging + upload pipeline
