@@ -6,6 +6,7 @@ import { Library } from './pages/Library';
 import { BookDetail } from './pages/BookDetail';
 import { Purchase } from './pages/Purchase';
 import { Reader } from './pages/Reader';
+import { StudioDashboard, StudioEditor } from './pages/Studio';
 import { MyLibrary } from './pages/MyLibrary';
 import { Admin } from './pages/Admin';
 
@@ -22,6 +23,8 @@ export default function App() {
           <Route path="/read/:id" element={<Reader />} />
           <Route path="/my-library" element={<MyLibrary />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/studio" element={<StudioDashboard />} />
+          <Route path="/studio/:type/:id" element={<StudioEditor />} />
         </Routes>
       </div>
     </ErrorBoundary>

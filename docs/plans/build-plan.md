@@ -246,7 +246,7 @@ Test: render same scene with and without shader — comic version should look li
 ```
 
 ### B6 — Creator web app (Cloudflare)
-⬜
+✅
 
 ```
 Build the web-based creator studio. Creators log in, write stories, preview AI output, publish.
@@ -392,7 +392,7 @@ PART B: Creator Studio ⬜ Not started
 ⬜ B3 — Self-host Llama 3 on RunPod (narration → scene JSON)
 ⬜ B4 — Self-host Stable Diffusion on RunPod (image generation)
 ⬜ B5 — Comic post-process shader
-⬜ B6 — Creator web app (Cloudflare)
+✅ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline
 
 PART C: Admin + Infrastructure
