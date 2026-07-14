@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import { useGenerate } from '@/hooks/useGenerate';
 
 interface Project {
   id: string;
@@ -92,6 +93,7 @@ export function StudioEditor() {
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const generate = useGenerate();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -122,16 +124,18 @@ export function StudioEditor() {
   }
 
   // Stub: simulate generation, return a mock image
-  async function generateScene(scene: Scene) {
+  async function handleGenerate(scene: Scene) {
     if (!scene.narration_text.trim()) return;
     setGeneratingId(scene.id);
-    await new Promise((r) => setTimeout(r, 2000));
-
-    const mockUrl = `/mock/content/1/scene_${((scene.scene_number - 1) % 5) + 1}.html`;
-    await supabase.from('scenes').update({ rendered_image_url: mockUrl }).eq('id', scene.id);
-    setScenes(scenes.map((s) =>
-      s.id === scene.id ? { ...s, rendered_image_url: mockUrl } : s
-    ));
+    try {
+      const url = await generate(scene.narration_text, scene.scene_number, project?.id ?? '');
+      await supabase.from('scenes').update({ rendered_image_url: url }).eq('id', scene.id);
+      setScenes(scenes.map((s) =>
+        s.id === scene.id ? { ...s, rendered_image_url: url } : s
+      ));
+    } catch {
+      // Generation failed — silently retryable
+    }
     setGeneratingId(null);
   }
 
@@ -190,7 +194,7 @@ export function StudioEditor() {
               </div>
               <button
                 className="generate-btn"
-                onClick={() => generateScene(scene)}
+                onClick={() => handleGenerate(scene)}
                 disabled={generatingId === scene.id}
               >
                 {generatingId === scene.id ? 'Generating...' : 'Generate'}

@@ -394,6 +394,7 @@ PART B: Creator Studio ⬜ Not started
 ⬜ B5 — Comic post-process shader
 ✅ B6 — Creator web app (Cloudflare)
 ⬜ B7 — Connect Creator Studio to rendering pipeline
+✅ B7 — Connect Creator Studio to rendering pipeline
 
 PART C: Admin + Infrastructure
 ✅ C1 — Admin panel
