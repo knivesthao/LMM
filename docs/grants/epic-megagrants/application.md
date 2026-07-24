@@ -110,23 +110,25 @@ This project stretches Unreal Engine into territory it has never occupied: servi
 
 ## *What funding range are you requesting for this project? (US Dollars)
 
-**$50,000–$100,000**
+**$25,000–$50,000**
 
-We are requesting approximately $65,000 for a 12-month build. All development runs on a cloud GPU — we have no local machine capable of UE5. We use RunPod (cheapest GPU option at $0.19/hr spot for dev, $0.29/hr on-demand for production) to run UE5 development, AI inference (Llama 3 for scene parsing + Stable Diffusion for image generation), and rendering — all on the same A5000 GPU during idle time between renders, eliminating external AI API costs.
+We are requesting approximately $43,000 for a focused 3-month development sprint followed by 9 months of platform hosting and operations — 12 months total. The development phase is compressed to deliver the core UE5 + AI pipeline rapidly, while the Operations Manager continues for the full year to run the platform, recruit creators, and manage content delivery.
+
+All development runs on a RunPod A5000 GPU ($0.19/hr spot for dev, $0.29/hr on-demand for occasional creator rendering) — we have no local machine capable of UE5. AI inference (Llama 3 for scene parsing + Stable Diffusion for image generation) runs on the same GPU during idle time, eliminating external API costs.
 
 | Category | Estimated | Detail |
 |----------|-----------|--------|
-| Personnel — AI Developer (1 FTE, 12 mo) | $24,000 | Unreal Engine 5 Blueprint scripting, AI pipeline integration, full-stack web development, mobile packaging. All technical development — uses AI assistance throughout. $2,000/month. |
-| Personnel — Operations Manager (1 FTE, 12 mo) | $18,000 | Studio space management, creator recruitment and outreach, school partnerships, marketing, payment integration coordination, content operations. $1,500/month. |
-| Personnel — QA / Content Writers (part-time, 2 people, months 5–12) | $8,000 | Part-time QA testing during later phases. Also write and produce our first content titles — real Lao stories that validate the pipeline with authentic local material. |
-| Studio Space | $5,000 | Rent for content creation and team workspace in Vientiane |
-| Equipment | $3,000 | Development and testing devices, content creation tools |
-| RunPod GPU (months 1–6, development) | $114 | RunPod A5000 (24GB VRAM) at $0.19/hr spot pricing, ~100 hours/month × 6 months. Also runs self-hosted Llama 3 (scene parsing) + Stable Diffusion (image gen) during idle time between renders — no external AI API costs. |
-| RunPod GPU (months 7–12, production) | $312 | RunPod A5000 at $0.29/hr on-demand, ~180 hours/month × 6 months. Handles UE5 rendering, Llama 3 LLM calls, and Stable Diffusion image generation on the same machine. |
-| Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), Supabase (free tier for prototype), domain (~$10) |
-| Content Commissioning | $3,000 | Flat fees to Lao creators for initial library titles beyond what in-house QA/writers produce |
-| Estimated Taxes (reserve) | $2,700 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses deductible — conservative reserve on projected net profit. |
-| **Total** | **~$64,926** | |
+| Personnel — AI Developer (1 FTE, 3 mo) | $6,000 | Unreal Engine 5 Blueprint scripting, AI pipeline integration, full-stack web development, mobile packaging. Intensive 3-month sprint to build the core pipeline. $2,000/month. |
+| Personnel — Operations Manager (1 FTE, 12 mo) | $18,000 | Full-year role. Studio space management, creator recruitment and outreach, school partnerships, marketing, payment integration, content operations. $1,500/month. |
+| Personnel — QA / Content Writers (part-time, 2 people, 3 mo) | $3,000 | QA testing and content writing during the development sprint. Produce our first real Lao stories that validate the pipeline. |
+| Studio Space | $5,000 | Annual rent for content creation and team workspace in Vientiane |
+| Equipment | $3,000 | Development and testing devices, content creation tools (one-time) |
+| RunPod GPU (3 mo development, spot) | $57 | RunPod A5000 (24GB VRAM) at $0.19/hr spot pricing, ~100 hours/month × 3 months. Self-hosted Llama 3 + Stable Diffusion run on the same GPU during idle time. |
+| RunPod GPU (9 mo hosting, on-demand) | $26 | Light usage during hosting phase — ~10 hours/month × 9 months at $0.29/hr. Only runs when creators generate new content. |
+| Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), Supabase free tier, domain (~$10). Full year. |
+| Content Commissioning | $3,000 | Flat fees to Lao creators for initial library titles beyond what in-house writers produce |
+| Estimated Taxes (reserve) | $3,900 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses are deductible — conservative reserve on projected net profit. |
+| **Total** | **~$42,783** | |
 
 **Note on items not shown:**
 - PWA mobile client development → part of AI Developer's scope (in salary)
@@ -137,22 +139,22 @@ We are requesting approximately $65,000 for a 12-month build. All development ru
 
 | Award | Scope |
 |-------|-------|
-| $25,000–$50,000 | Core UE + AI pipeline functional, Lao-only, reduced content library, shorter timeline |
-| $10,000–$25,000 | Minimum viable pipeline: UE renders AI-generated comic strips from text input, sample content only |
+| $25,000–$35,000 | Core UE + AI pipeline functional, Lao-only, reduced content library, shorter manager contract |
+| $10,000–$25,000 | Minimum viable pipeline: UE renders AI-generated comic strips from text, sample content only |
 
 ---
 
 ## *How do you plan to use the funds for the project?
 
-The funds cover a 12-month build (September 2026 – August 2027) across four phases:
+The $43,000 funds a 3-month intensive development sprint (September–November 2026) followed by 9 months of platform hosting and operations (December 2026–August 2027), totaling 12 months:
 
-**Phase 1 — Foundation (Months 1–2):** Set up UE5 development environment. Integrate LLM API for Lao and English scene parsing. Deploy self-hosted Stable Diffusion with ControlNet for consistent character generation. Build the initial Blueprint orchestrator skeleton. AI Developer begins training on UE Pixel Streaming and MRQ pipeline automation.
+**Phase 1 — Core Pipeline (Month 1):** Provision RunPod A5000 GPU. Set up UE5 development environment. Deploy self-hosted Llama 3 (scene parsing via Ollama) and Stable Diffusion (image generation via ComfyUI) on the same GPU. Build the Blueprint orchestrator that reads structured scene data, spawns AI-generated assets, configures lighting and cameras, applies the custom comic post-process shader, and renders via Movie Render Queue. Achieve the first end-to-end pipeline test: text narration in Lao → UE-rendered comic strip.
 
-**Phase 2 — Core Pipeline (Months 3–5):** Complete the Blueprint orchestrator — reads structured scene data, spawns AI-generated assets onto 3D character models and environments, configures lighting and cameras, applies the custom comic post-process shader, renders via Movie Render Queue. Build library of base meshes representing Lao and Thai visual contexts. Achieve the first end-to-end pipeline test: text narration in Lao → UE-rendered comic strip.
+**Phase 2 — Creator Tool + Content (Month 2):** Build the web-based creator interface (React SPA on Cloudflare Pages). Design the create-and-publish flow. Build the Workers API gateway that connects creator actions to the RunPod rendering pipeline. Onboard 5 Lao creators for alpha testing. QA/Content Writers begin part-time — testing pipeline output quality and writing our first original stories.
 
-**Phase 3 — Creator Tool + Alpha Testing (Months 6–9):** Build the web-based creator interface. Design the create-and-publish flow. Onboard 5 Lao creators for alpha testing. QA/Content Writers begin part-time — testing pipeline output quality and writing our first original stories. Iterate on pipeline quality based on real creator feedback.
+**Phase 3 — Launch + Library (Month 3):** Produce initial library of 30+ comics and 10+ interactive books in Lao and English. Build the digital library frontend (content catalog, phone auth purchase flow, chunked download reader, PWA offline support). Conduct user testing with Lao students. Launch platform with 100 beta users. Publish open-source Blueprint plugin to GitHub under MIT license.
 
-**Phase 4 — Launch + Content Library (Months 10–12):** Produce initial library of 30+ comics and 10+ interactive books in Lao and English. Conduct user testing with Lao students. Train ADMAIS Laos team to operate platform independently. Publish open-source Blueprint plugin to GitHub under MIT license. Launch platform with 100 beta users.
+**Phase 4 — Operations & Growth (Months 4–12):** Operations Manager continues full-time: recruiting creators, managing school partnerships, handling customer support, processing QR/WhatsApp payments. The platform runs on Cloudflare + Supabase at near-zero infrastructure cost. The GPU runs only when creators generate new content (~10 hours/month). Content library grows organically as creators publish. Revenue begins from creator subscriptions and content sales.
 
 ---
 
