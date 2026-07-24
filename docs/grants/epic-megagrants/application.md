@@ -112,24 +112,22 @@ This project stretches Unreal Engine into territory it has never occupied: servi
 
 **$25,000–$50,000**
 
-We are requesting approximately $38,000 for a focused 3-month development sprint followed by 9 months of platform hosting and operations — 12 months total. The development phase is compressed to deliver the core UE5 + AI pipeline rapidly, while the Operations Manager continues for the full year to run the platform, recruit creators, and manage content delivery.
+We are requesting approximately $33,000 for a focused 3-month development sprint followed by 9 months of platform hosting and operations — 12 months total. The development phase is compressed to deliver the core UE5 + AI pipeline rapidly, while the Operations Manager continues for the full year to run the platform, recruit creators, and manage content delivery.
 
 All development runs on a RunPod A5000 GPU ($0.19/hr spot for dev, $0.29/hr on-demand for occasional creator rendering) — we have no local machine capable of UE5. AI inference (Llama 3 for scene parsing + Stable Diffusion for image generation) runs on the same GPU during idle time, eliminating external API costs.
 
 | Category | Estimated | Detail |
 |----------|-----------|--------|
 | Personnel — AI Developer (1 FTE, 3 mo) | $6,000 | Unreal Engine 5 Blueprint scripting, AI pipeline integration, full-stack web development, mobile packaging. Intensive 3-month sprint to build the core pipeline. $2,000/month. |
-| Personnel — Operations Manager (1 FTE, 12 mo) | $12,000 | Full-year role. Studio space management, creator recruitment and outreach, school partnerships, marketing, payment integration, content operations. $1,000/month. |
-| Personnel — QA / Content Writers (part-time, 2 people, 3 mo) | $3,000 | QA testing and content writing during the development sprint. Produce our first real Lao stories that validate the pipeline. |
-| Studio Space | $5,000 | Annual rent for content creation and team workspace in Vientiane |
+| Personnel — Operations Manager (1 FTE, 12 mo) | $12,000 | Full-year role. Creator recruitment and outreach, school partnerships, marketing, payment integration, content operations. $1,000/month. |
+| Personnel — QA / Content Writers + External Art (part-time, 2 people + contracts, 3 mo) | $6,000 | QA testing, content writing, AND commissioning external Lao artists for illustrations. Covers both in-house writing work and paid commissions for the launch library. |
 | Equipment | $3,000 | Development and testing devices, content creation tools (one-time) |
 | RunPod GPU (3 mo development, spot) | $57 | RunPod A5000 (24GB VRAM) at $0.19/hr spot pricing, ~100 hours/month × 3 months. Self-hosted Llama 3 + Stable Diffusion run on the same GPU during idle time. |
 | RunPod GPU (9 mo hosting, on-demand) | $26 | Light usage during hosting phase — ~10 hours/month × 9 months at $0.29/hr. Only runs when creators generate new content. |
 | Web Hosting + CDN + Domain | $800 | Cloudflare Pages (free), Workers (free tier), R2 storage (~$50), Supabase free tier, domain (~$10). Full year. |
-| Content Commissioning | $3,000 | Flat fees to Lao creators for initial library titles beyond what in-house writers produce |
 | Advertising & Events | $5,000 | Social media ads targeting Lao parents/teachers (Facebook, Instagram), community events to onboard creators and users, printed materials for rural school outreach. |
-| Estimated Taxes (reserve) | $3,600 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses are deductible — conservative reserve on projected net profit. |
-| **Total** | **~$38,483** | |
+| Estimated Taxes (reserve) | $3,200 | Grant recipient is ADMAIS Laos. Corporate tax ~20%. Most expenses are deductible — conservative reserve on projected net profit. |
+| **Total** | **~$33,483** | |
 
 **Note on items not shown:**
 - PWA mobile client development → part of AI Developer's scope (in salary)
